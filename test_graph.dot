@@ -1,0 +1,12 @@
+digraph  {
+	nodesep="0.5";rankdir="LR";ranksep="0.5";
+	n1[fillcolor="white",label="{a | 1}",shape="record",style="filled"];
+	n2[fillcolor="white",label="{b | 2}",shape="record",style="filled"];
+	n3[fillcolor="white",label="{c | 3 | op: +}",shape="record",style="filled"];
+	n4[fillcolor="white",label="{d | 3 | op: *}",shape="record",style="filled"];
+	n1->n3[color="#666666"];
+	n1->n4[color="#666666"];
+	n2->n3[color="#666666"];
+	n3->n4[color="#666666"];
+	
+}

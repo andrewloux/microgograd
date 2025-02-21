@@ -1,0 +1,16 @@
+digraph  {
+	nodesep="0.8";rankdir="LR";ranksep="0.6";splines="curved";
+	n1[class="node value-node",fillcolor="white",label="{a | 2}",shape="record",style="filled"];
+	n2[class="node value-node",fillcolor="white",label="{b | 3}",shape="record",style="filled"];
+	n3[class="node value-node",fillcolor="white",label="{c | 6}",shape="record",style="filled"];
+	n5[class="node op-node",fillcolor="#f0f0f0",fixedsize="true",fontsize="20",height="0.5",label="*",margin="0",pad="0.2",penwidth="2",shape="circle",style="filled",width="0.5"];
+	n4[class="node value-node",fillcolor="white",label="{result | 8}",shape="record",style="filled"];
+	n6[class="node op-node",fillcolor="#f0f0f0",fixedsize="true",fontsize="20",height="0.5",label="+",margin="0",pad="0.2",penwidth="2",shape="circle",style="filled",width="0.5"];
+	n1->n5[class="edge",color="#666666",data-source="0x1400011e080",data-target="0x1400011e100_op",id="edge_0x1400011e080_0x1400011e100_op",penwidth="1.5"];
+	n1->n6[class="edge",color="#666666",data-source="0x1400011e080",data-target="0x1400011e140_op",id="edge_0x1400011e080_0x1400011e140_op",penwidth="1.5"];
+	n2->n5[class="edge",color="#666666",data-source="0x1400011e0c0",data-target="0x1400011e100_op",id="edge_0x1400011e0c0_0x1400011e100_op",penwidth="1.5"];
+	n3->n6[class="edge",color="#666666",data-source="0x1400011e100",data-target="0x1400011e140_op",id="edge_0x1400011e100_0x1400011e140_op",penwidth="1.5"];
+	n5->n3[class="edge",color="#666666",data-source="0x1400011e100_op",data-target="0x1400011e100",id="edge_0x1400011e100_op_0x1400011e100",penwidth="1.5"];
+	n6->n4[class="edge",color="#666666",data-source="0x1400011e140_op",data-target="0x1400011e140",id="edge_0x1400011e140_op_0x1400011e140",penwidth="1.5"];
+	
+}
