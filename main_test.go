@@ -21,8 +21,8 @@ func TestDOTOutput(t *testing.T) {
 		{
 			name: "simple multiplication",
 			setup: func() *micrograd.Value[float64] {
-				a := micrograd.NewValue(2.0, micrograd.WithName("a"))
-				b := micrograd.NewValue(-3.0, micrograd.WithName("b"))
+				a := micrograd.NewValue(2.0, micrograd.WithName[float64]("a"))
+				b := micrograd.NewValue(-3.0, micrograd.WithName[float64]("b"))
 				c := a.Mul(b).(*micrograd.Value[float64])
 				c.Name = "c"
 				return c
@@ -37,9 +37,9 @@ func TestDOTOutput(t *testing.T) {
 		{
 			name: "chained operations",
 			setup: func() *micrograd.Value[float64] {
-				x := micrograd.NewValue(2.0, micrograd.WithName("x"))
-				y := micrograd.NewValue(3.0, micrograd.WithName("y"))
-				z := micrograd.NewValue(4.0, micrograd.WithName("z"))
+				x := micrograd.NewValue(2.0, micrograd.WithName[float64]("x"))
+				y := micrograd.NewValue(3.0, micrograd.WithName[float64]("y"))
+				z := micrograd.NewValue(4.0, micrograd.WithName[float64]("z"))
 				out := x.Add(y.Mul(z)).(*micrograd.Value[float64])
 				out.Name = "out"
 				return out
@@ -77,7 +77,7 @@ func TestDOTOutput(t *testing.T) {
 
 func TestDOTFormatting(t *testing.T) {
 	t.Run("node_style", func(t *testing.T) {
-		v := micrograd.NewValue(1.0, micrograd.WithName("test"))
+		v := micrograd.NewValue(1.0, micrograd.WithName[float64]("test"))
 		err := plot.WriteGraph[float64](v, "test_graph.dot")
 		assert.NoError(t, err)
 
@@ -93,8 +93,8 @@ func TestDOTFormatting(t *testing.T) {
 
 func TestTopologicalOrder(t *testing.T) {
 	t.Run("order", func(t *testing.T) {
-		a := micrograd.NewValue(1.0, micrograd.WithName("a"))
-		b := micrograd.NewValue(2.0, micrograd.WithName("b"))
+		a := micrograd.NewValue(1.0, micrograd.WithName[float64]("a"))
+		b := micrograd.NewValue(2.0, micrograd.WithName[float64]("b"))
 		c := a.Add(b).(*micrograd.Value[float64])
 		c.Name = "c"
 		d := c.Mul(a).(*micrograd.Value[float64])

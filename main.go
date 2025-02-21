@@ -11,20 +11,19 @@ import (
 func main() {
 	// Create a simple computation graph
 	a := micrograd.NewValue(2.0, micrograd.WithName("a"))
-	b := micrograd.NewValue(3.0, micrograd.WithName("b"))
-	c := a.Mul(b).(*micrograd.Value[float64])
-	c.Name = "c"
-	d := c.Add(a).(*micrograd.Value[float64])
-	d.Name = "result"
+	b := micrograd.NewValue(-3.0, micrograd.WithName("b"))
+	c := micrograd.NewValue(10.0, micrograd.WithName("c"))
 
-	// Generate DOT file with default node labels
-	err := plot.WriteGraph(d, "graph.dot")
-	if err != nil {
-		log.Fatalf("Error generating graph: %v", err)
-	}
+	e := a.Mul(b).SetName("c")
+	d := e.Add(c).SetName("d")
+
+	f := micrograd.NewValue(-2.0).SetName("f")
+	L := d.Mul(f).SetName("L")
+
+	L.SetGradient(1.0)
 
 	// Generate interactive HTML version
-	err = plot.WriteInteractiveHTML(d, "graph.html")
+	err := plot.WriteInteractiveHTML(L, "graph.html")
 	if err != nil {
 		log.Fatalf("Error generating interactive graph: %v", err)
 	}
