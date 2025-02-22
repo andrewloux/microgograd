@@ -16,7 +16,7 @@ const (
 )
 
 type BaseNumeric interface {
-	constraints.Integer | constraints.Float | constraints.Complex
+	constraints.Float
 }
 
 type Numeric[K BaseNumeric] interface {
@@ -31,6 +31,7 @@ type Numeric[K BaseNumeric] interface {
 	SetGradient(K) *Value[K]
 	GetChildren() Pair[Numeric[K]]
 	GetOperation() OperationEnum
+	Backtrack()
 }
 
 type Value[K BaseNumeric] struct {
@@ -42,7 +43,7 @@ type Value[K BaseNumeric] struct {
 	operation OperationEnum
 }
 
-var _ Numeric[int] = NewValue(0)
+var _ Numeric[float64] = NewValue(0.0)
 
 func (v *Value[K]) Add(input Numeric[K]) Numeric[K] {
 	return &Value[K]{
@@ -105,6 +106,39 @@ func (v *Value[K]) GetGradient() K {
 func (v *Value[K]) SetGradient(input K) *Value[K] {
 	v.gradient = input
 	return v
+}
+
+func (v *Value[K]) Backtrack() {
+	// have: dO[utput]/dv
+	// want: dO/da, dO/db -- i.e. we want to know how each leaf node (input)
+	// 		 affects the overall output of the system
+	a, b := v.GetChildren().first, v.GetChildren().second
+	if a == nil && b == nil {
+		return
+	}
+
+	switch v.GetOperation() {
+	case ADD:
+		// a + b
+		// dv/da = 1
+		// dv/da * dO/dv = dv/da
+		// 1 *
+		a.SetGradient(a.GetGradient() + 1*v.GetGradient())
+		// dv/db = 1
+		b.SetGradient(b.GetGradient() + 1*v.GetGradient())
+	case MUL:
+		// a * b
+		// dv/da = b
+		// dv/da * dO/dv = d0/da
+		a.SetGradient(a.GetGradient() + b.GetValue()*v.GetGradient())
+		// dv/db = a
+		// dv/db * dO/dv = d0/db
+		b.SetGradient(b.GetGradient() + a.GetValue()*v.GetGradient())
+	}
+
+	// continue with the rest of the backtrack logic
+	a.Backtrack()
+	b.Backtrack()
 }
 
 type ValueOptions[K BaseNumeric] struct {

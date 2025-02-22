@@ -3,34 +3,32 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
-	"microgograd/micrograd"
-	"microgograd/plot"
+	"microgograd/examples/manual_backprop"
 )
 
 func main() {
-	// Create a simple computation graph
-	a := micrograd.NewValue(2.0, micrograd.WithName("a"))
-	b := micrograd.NewValue(-3.0, micrograd.WithName("b"))
-	c := micrograd.NewValue(10.0, micrograd.WithName("c"))
+	fmt.Println("MicroGrad Examples")
+	fmt.Println("=================")
+	fmt.Println("\nAvailable examples:")
+	fmt.Println("1. Manual Backpropagation")
+	fmt.Println("\nSelect an example (1) or press Ctrl+C to exit:")
 
-	e := a.Mul(b).SetName("c")
-	d := e.Add(c).SetName("d")
+	var choice string
+	fmt.Scanln(&choice)
 
-	f := micrograd.NewValue(-2.0).SetName("f")
-	L := d.Mul(f).SetName("L")
+	switch choice {
+	case "1":
+		fmt.Println("\nRunning Manual Backpropagation Example...")
+		fmt.Println("(To run directly: go run cmd/manual_backprop/main.go)")
+		fmt.Println()
 
-	L.SetGradient(1.0)
-
-	// Generate interactive HTML version
-	err := plot.WriteInteractiveHTML(L, "graph.html")
-	if err != nil {
-		log.Fatalf("Error generating interactive graph: %v", err)
+		if err := manual_backprop.Run(); err != nil {
+			log.Fatalf("Error running example: %v", err)
+		}
+	default:
+		fmt.Println("Invalid choice")
+		os.Exit(1)
 	}
-
-	fmt.Println("Generated graph.dot")
-	fmt.Println("To visualize static graph, run:")
-	fmt.Println("dot -Tsvg graph.dot -o graph.svg")
-	fmt.Println("\nGenerated interactive graph.html")
-	fmt.Println("Open graph.html in a browser to interact with the graph")
 }

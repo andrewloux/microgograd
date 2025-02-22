@@ -1,6 +1,7 @@
 package plot
 
 import (
+	"embed"
 	"fmt"
 	"os"
 	"strings"
@@ -9,6 +10,9 @@ import (
 
 	"github.com/emicklei/dot"
 )
+
+//go:embed template.html
+var templateFS embed.FS
 
 // NodeLabelFunc is a function type that generates a label for a Value node
 type NodeLabelFunc[K micrograd.BaseNumeric] func(node micrograd.Numeric[K]) string
@@ -36,9 +40,9 @@ func defaultNodeLabel[K micrograd.BaseNumeric](node micrograd.Numeric[K]) string
 		name = "?"
 	}
 
-	parts = append(parts, name)
-	parts = append(parts, fmt.Sprintf("Data: %v", node.GetValue()))
-	parts = append(parts, fmt.Sprintf("Grad: %v", node.GetGradient()))
+	parts = append(parts, fmt.Sprintf("Name: %s", name))
+	parts = append(parts, fmt.Sprintf("Value: %.4f", node.GetValue()))
+	parts = append(parts, fmt.Sprintf("Grad: %.4f", node.GetGradient()))
 
 	return strings.Join(parts, "\\n")
 }
@@ -158,33 +162,15 @@ func WriteInteractiveHTML[K micrograd.BaseNumeric](node micrograd.Numeric[K], fi
 	// Generate DOT
 	dot := dotFromValue(node, cfg)
 
-	// Read HTML template
-	templateContent, err := os.ReadFile("plot/template.html")
+	// Read HTML template from embedded file
+	templateContent, err := templateFS.ReadFile("template.html")
 	if err != nil {
-		return fmt.Errorf("failed to read template file: %v", err)
+		return fmt.Errorf("failed to read embedded template file: %v", err)
 	}
 
 	// Replace placeholder with DOT content
 	html := strings.Replace(string(templateContent), "<!-- DOT_CONTENT -->", dot, 1)
 
+	// Write the output file
 	return os.WriteFile(filePath, []byte(html), 0644)
-}
-
-// WriteGraph generates a DOT representation of the computation graph and writes it to a file
-func WriteGraph[K micrograd.BaseNumeric](node micrograd.Numeric[K], filePath string, opts ...PlotOption[K]) error {
-	// Set up configuration with defaults
-	cfg := &plotConfig[K]{
-		labelFunc: defaultNodeLabel[K],
-	}
-
-	// Apply options
-	for _, opt := range opts {
-		opt(cfg)
-	}
-
-	// Generate DOT
-	dot := dotFromValue(node, cfg)
-
-	// Write to file
-	return os.WriteFile(filePath, []byte(dot), 0644)
 }
